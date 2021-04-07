@@ -52,9 +52,6 @@
 
 
 <script>
-    $(document).ready(function () {
-
-    });
 
     function GetWeather(){
         var zipcode = $("#zipCode").val();
@@ -86,11 +83,11 @@
         $("#weatherDisplay").show();
         $("#city").html("Weather for: " + result.name);
         $("#currentCondition").html("Current condition: " + result.weather[0].description);
-        $("#temperature").html("Temperature (F): " + result.main.temp);
+        $("#temperature").html("Temperature (F): " + Math.floor(result.main.temp));
         $("#wind").html("Wind speed and direction: " + result.wind.speed + " MPH " + GetDirection(result.wind.deg));
         $("#humidity").html("Humidity: " + result.main.humidity);
-        $("#minTemp").html("Min Temperature (F): " + result.main.temp_min);
-        $("#maxTemp").html("Max Temperature (F): " + result.main.temp_max);
+        $("#minTemp").html("Min Temperature (F): " + Math.floor(result.main.temp_min));
+        $("#maxTemp").html("Max Temperature (F): " + Math.floor(result.main.temp_max));
         
         //Log to console for debugging purposes
         console.log(result);
