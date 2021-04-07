@@ -1,0 +1,107 @@
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+
+    
+
+<div class="container">
+    <h1>Lab 9 - Weather API</h1>
+    <p>Eric Conklin</p>
+    <hr/>
+
+    <h2>Enter a ZIP Code</h2>
+    <input type="text" id="zipCode">
+    <br/>
+    <br/>
+    <button class="btn btn-lg btn-success" id="getWeather" onclick="GetWeather()">Click here to get the weather</button>
+    <br/>
+    <br/>
+    <div class="row" id="weatherDisplay" style="display: none;">
+        <div class="col-md-12">
+            <h1 id="city">Weather for </h1>
+            <hr/>
+        </div>
+        
+        <br/>
+        <div class="col-md-6">
+            <p id="currentCondition">Current condition: </p>
+        </div>
+        <div class="col-md-6">
+            <p id="temperature">Temperature: </p>
+        </div>
+        <div class="col-md-6">
+            <p id="wind">Wind speed and direction: </p>
+        </div>
+        <div class="col-md-6">
+            <p id="humidity">Humidity: </p>
+        </div>
+        <div class="col-md-6">
+            <p id="minTemp">Minimum Temperature: </p>
+        </div>
+        <div class="col-md-6">
+            <p id="maxTemp">Maximum temperature: </p>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+
+    });
+
+    function GetWeather(){
+        var zipcode = $("#zipCode").val();
+        //Validate ZIP code format via Regex - display error to user if invalid.
+        if (/(^\d{5}$)|(^\d{5}-\d{4}$)/.test(zipcode)){
+            //Begin AJAX query to weather API
+            var zipCode = $('#zipCode').val();
+            var url = "http://api.openweathermap.org/data/2.5/weather?zip=" + zipCode + ",us&appid=d1619ced9ad1c4a0835dba9e915d3092&units=imperial";
+            $.ajax({
+                method: "GET",
+                url: url,
+                dataType: "json",
+                success: function(result){
+                    DisplayWeather(result);
+                },
+                error: function(request, status, error){
+                    alert("An error occurred: " + request.responseText);
+                    $("#weatherDisplay").hide();
+                }
+            });
+
+        } else {
+            $("#weatherDisplay").hide();
+            alert("Please enter a valid zip code.");
+        }
+    }
+
+    function DisplayWeather(result){
+        $("#weatherDisplay").show();
+        $("#city").html("Weather for: " + result.name);
+        $("#currentCondition").html("Current condition: " + result.weather[0].description);
+        $("#temperature").html("Temperature (F): " + result.main.temp);
+        $("#wind").html("Wind speed and direction: " + result.wind.speed + " MPH " + GetDirection(result.wind.deg));
+        $("#humidity").html("Humidity: " + result.main.humidity);
+        $("#minTemp").html("Min Temperature (F): " + result.main.temp_min);
+        $("#maxTemp").html("Max Temperature (F): " + result.main.temp_max);
+        
+        //Log to console for debugging purposes
+        console.log(result);
+
+    }
+
+    var directions = ["North", "North-East", "East", "South-East", "South", "South-West", "West", "North-West"]
+
+    function GetDirection(angle) {
+        var index = Math.round(((angle %= 360) < 0 ? angle + 360 : angle) / 45) % 8;
+        return directions[index]
+    }
+</script>
+</body>
